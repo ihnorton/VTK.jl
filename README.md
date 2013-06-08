@@ -1,12 +1,27 @@
 Proof of concept: Julia wrapper for VTK
 ======================================
 
+Prerequisites
+=============
+
+* The uploaded bindings were generated against VTK 5.10.1 on 64-bit Ubuntu Linux (12.04).
+* VTK must be built from source with a patched build system
+  * https://gist.github.com/ihnorton/5735053
+  * The patch preserves stubs for inline functions, which are elided by default.
+* The bindings generator was tested against VTK5.8 early in development, but has not been tested recently.
+
+*Note* The uploaded bindings will almost certainly not work on Windows, and have not been tested on OS X.
+
+
 Background
 ==========
 
 Several new functions have been added to Clang.jl to allow querying the vtable index and mangled name for C++ methods.
 Please see the branch wip\_testing in Clang.jl and [this ticket](https://github.com/ihnorton/Clang.jl/issues/20)
 for implementation details.
+
+
+
 
 Examples
 ========
