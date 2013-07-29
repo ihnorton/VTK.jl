@@ -3,7 +3,9 @@ macro scall(ret_type, func, arg_types, sym, lib)
   local _args_in = Any[ symbol(string('a',x)) for x in 1:length(arg_types.args) ]
   hdl = dlopen(string(lib))
   fptr = dlsym_e(hdl, sym)
-  if (fptr==C_NULL) return end
+  if (fptr==C_NULL)
+    warn("No symbol found for static call: ", func)
+  end
   quote
     function $(esc(func))($(_args_in...))
       ccall( $(esc(fptr)), $(esc(ret_type)), $(esc(arg_types)), $(_args_in...) )
@@ -17,8 +19,9 @@ macro mcall(ret_type, func, arg_types, sym, lib)
   larg_types = :((Ptr{Void}, $(arg_types.args...)))
   hdl = dlopen(string(lib))
   fptr = dlsym_e(hdl,sym)
-  if(fptr==C_NULL) return end
-  #println(fptr)
+  if(fptr==C_NULL)
+    warn("No symbol found for method call: ", func)
+  end
   quote
     function $(esc(func)){T <: $cur_class}(thisptr::Ptr{T}, $(_args_in...))
       ccall( $(fptr), thiscall, $(esc(ret_type)), $(esc(larg_types)), thisptr, $(_args_in...) )
