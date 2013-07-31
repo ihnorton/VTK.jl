@@ -4,7 +4,7 @@ macro scall(ret_type, func, arg_types, sym, lib)
   hdl = dlopen(string(lib))
   fptr = dlsym_e(hdl, sym)
   if (fptr==C_NULL)
-    warn("No symbol found for static call: ", func)
+    warn("No symbol found for static call: ", string(func))
   end
   quote
     function $(esc(func))($(_args_in...))
@@ -20,7 +20,7 @@ macro mcall(ret_type, func, arg_types, sym, lib)
   hdl = dlopen(string(lib))
   fptr = dlsym_e(hdl,sym)
   if(fptr==C_NULL)
-    warn("No symbol found for method call: ", func)
+    warn("No symbol found for method call: ", string(func))
   end
   quote
     function $(esc(func)){T <: $cur_class}(thisptr::Ptr{T}, $(_args_in...))
