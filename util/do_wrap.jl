@@ -1,8 +1,11 @@
-const extra_inc_dirs =["Common", "Utilities", "VolumeRendering", "Rendering"]
-const extra_inc_paths=map(x -> joinpath("-I/cmn/git/VTK5101-build/", x), extra_inc_dirs)
-insert!(extra_inc_paths, 1, "-I/cmn/git/VTK5101-build/")
+VTK_BUILD_PATH="/cmn/git/VTK5b"
+VTK_SOURCE_PATH="/cmn/git/VTK"
 
-const vtksubdirs = map(x->joinpath("/cmn/git/VTK/", x), ["Common",
+const extra_inc_dirs =["Common", "Utilities", "VolumeRendering", "Rendering"]
+const extra_inc_paths=map(x -> joinpath("-I$VTK_BUILD_PATH", x), extra_inc_dirs)
+insert!(extra_inc_paths, 1, "-I$VTK_BUILD_PATH")
+
+const vtksubdirs = map(x->joinpath("$VTK_SOURCE_PATH", x), ["Common",
 "Filtering",
 "GenericFiltering",
 "Charts",
@@ -16,7 +19,7 @@ const vtksubdirs = map(x->joinpath("/cmn/git/VTK/", x), ["Common",
 #"Widgets"
 ] )
 
-vtklibs = [splitdir(splitext(chomp(x))[1])[2] for x in readlines(`sh -c "ls /cmn/git/VTK5101-build/bin/libvtk*.so | egrep [A-Z]"`)]
+vtklibs = [splitdir(splitext(chomp(x))[1])[2] for x in readlines(`sh -c "ls $VTK_BUILD_PATH/bin/libvtk*.so | egrep [A-Z]"`)]
 
 findhdrs(dir) =
   [splitdir(chomp(h)) for h in readlines(`find $dir -type f -name "vtk*.h"`)]

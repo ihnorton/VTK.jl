@@ -1,5 +1,8 @@
 using Clang.wrap_cpp, Clang.cindex, Clang.wrap_c
 
+VTK_BUILD_PATH="/cmn/git/VTK5b"
+JULIA_ROOT="/cmn/git/julia"
+
 import Clang.cindex.CurKind
 
 const debug = false
@@ -18,9 +21,10 @@ function wrap_header(clsname, hmap, liblist)
     ["-x", "c++",
      map(x->"-I"*x, vtksubdirs)...,
      extra_inc_paths...,
-     "-I/cmn/git/VTK5101-build/includes",
-     "-I/cmn/git/julia/deps/llvm-3.2/build/Release/lib/clang/3.2/include",
-     "-c"])
+     "-I$VTK_BUILD_PATH/includes",
+     "-I$JULIA_ROOT/deps/llvm-3.2/build/Release/lib/clang/3.2/include",
+     "-c"],
+    cindex.TranslationUnit_Flags.None)
 
 
   ### Get translation unit
