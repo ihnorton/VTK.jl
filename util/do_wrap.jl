@@ -1,3 +1,6 @@
+USE_CLANG_CPP=true
+
+VTK_VER="5.10"
 VTK_BUILD_PATH="/cmn/git/VTK5b"
 VTK_SOURCE_PATH="/cmn/git/VTK"
 
@@ -21,7 +24,7 @@ vtk_version_subdirs["5.10"] = map(x->joinpath("$VTK_SOURCE_PATH", x),
     ])
 
 
-const vtksubdirs = vtk_version_subdirs["6.0"]
+const vtksubdirs = vtk_version_subdirs[VTK_VER]
 vtklibs = [splitdir(splitext(chomp(x))[1])[2] for x in readlines(`sh -c "ls $VTK_BUILD_PATH/bin/libvtk*.so | egrep [A-Z]"`)]
 
 findhdrs(dir) =
@@ -49,7 +52,7 @@ if (wraptrue)
     print(open("vtk_classes.txt", "w"), "")
 
     require("../util/wrap_vtk.jl")
-
+    
     for (dir,hdr) in hdrs
         println(hdr)
         hdrcls = split(hdr, ".")[1]
