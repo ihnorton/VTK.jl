@@ -1,4 +1,4 @@
-USE_CLANG_CPP=true
+#USE_CLANG_CPP=true
 
 VTK_VER="5.10"
 VTK_BUILD_PATH="/cmn/git/VTK5b"
@@ -35,8 +35,6 @@ const hmap = Dict{ASCIIString,ASCIIString}()
 map(x-> setindex!(hmap, x[1], x[2]), hdrs)
 
 classmap = Dict{ASCIIString,  Array{ASCIIString, 1}}()
-
-vtk_test_hdr = "$VTK_SOURCE_PATH/Common/DataModel/vtkPolyData.h"
 
 #### Do the wrapping
 wraptrue = false
