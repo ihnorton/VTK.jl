@@ -1,24 +1,48 @@
-USE_CLANG_CPP=true
+VTK_BUILD_PATH="/git/VTK/b6"
+VTK_SOURCE_PATH="/git/VTK/src"
 
-using Clang.cindex
-using Clang.wrap_cpp
+vtk_version_subdirs = Dict{String, Array{String,1}}()
+
+vtk_version_subdirs["6.0"] = map(x->joinpath("$VTK_SOURCE_PATH", x),
+    [
+    "Filters", "Charts", "Geovis", "Imaging",
+    "IO", "Rendering", "Views"
+    ])
+
+vtk_version_subdirs["5.10"] = map(x->joinpath("$VTK_SOURCE_PATH", x),
+    [
+    "Common", "Filtering", "GenericFiltering", "Charts",
+    "Geovis", "Graphics", "Imaging", "IO", "Rendering",
+    "VolumeRendering", "Views", #"Widgets"
+    ])
+
+
+const vtksubdirs = vtk_version_subdirs["6.0"]
+vtklibs = [splitdir(splitext(chomp(x))[1])[2] for x in readlines(`sh -c "ls $VTK_BUILD_PATH/lib/libvtk*.so | egrep [A-Z]"`)]
+
+findhdrs(dir) =
+  [splitdir(chomp(h)) for h in readlines(`find $dir -type f -name "vtk*.h"`)]
+hdrs = vcat(map(findhdrs, vtksubdirs)...)
+
+const hmap = Dict{ASCIIString,ASCIIString}()
+map(x-> setindex!(hmap, x[1], x[2]), hdrs)
+
+classmap = Dict{ASCIIString,  Array{ASCIIString, 1}}()
+
+vtk_test_hdr = "$VTK_SOURCE_PATH/Common/DataModel/vtkPolyData.h"
+
+##################################
 
 HOME=ENV["HOME"]
-require("$HOME/.julia/VTK.jl/util/do_wrap.jl")
+require("/git/vtk.jl/util/do_wrap.jl")
 
-idx = cindex.idx_create()
+includepaths = split(readlines(open("/git/vtk.jl//build/vtk_includes.txt"))..., ";")
 
-tu = cindex.tu_parse(
-        idx, vtk_test_hdr,
-        [
-        "-x", "c++",
-        map(x->"-I"*x, vtksubdirs)...,
-            extra_inc_paths...,
-            "-I$VTK_BUILD_PATH/includes",
-            "-I$JULIA_HOME/../../deps/llvm-3.3/build/Release/lib/clang/3.3/include",
-            "-c"
-        ],
-        cindex.TranslationUnit_Flags.None)
+top = cindex.parse(
+        vtk_test_hdr;
+        ClangIncludes = includepaths,
+        ClangArgs = ["-x", "c++"],
+        ParserFlags = cindex.TranslationUnit_Flags.None)
 
-topcu = tu_cursor(tu)
-topcl = children(topcu) 
+
+vtkPD = search(top, "vtkPolyData")[1]

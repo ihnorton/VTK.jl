@@ -1,5 +1,5 @@
-VTK_BUILD_PATH="/cmn/git/VTK5b"
-VTK_SOURCE_PATH="/cmn/git/VTK"
+VTK_BUILD_PATH="/git/VTK/b6"
+VTK_SOURCE_PATH="/git/VTK/src"
 
 const extra_inc_dirs =["Common", "Utilities", "VolumeRendering", "Rendering"]
 const extra_inc_paths=map(x -> joinpath("-I$VTK_BUILD_PATH", x), extra_inc_dirs)
@@ -22,7 +22,7 @@ vtk_version_subdirs["5.10"] = map(x->joinpath("$VTK_SOURCE_PATH", x),
 
 
 const vtksubdirs = vtk_version_subdirs["6.0"]
-vtklibs = [splitdir(splitext(chomp(x))[1])[2] for x in readlines(`sh -c "ls $VTK_BUILD_PATH/bin/libvtk*.so | egrep [A-Z]"`)]
+vtklibs = [splitdir(splitext(chomp(x))[1])[2] for x in readlines(`sh -c "ls $VTK_BUILD_PATH/lib/libvtk*.so | egrep [A-Z]"`)]
 
 findhdrs(dir) =
   [splitdir(chomp(h)) for h in readlines(`find $dir -type f -name "vtk*.h"`)]
